@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blood Group Prediction</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 50px;
+        }
+        #upload-form {
+            border: 2px dashed #ccc;
+            padding: 20px;
+            display: inline-block;
+        }
+        input[type="file"] {
+            margin: 10px 0;
+        }
+        #prediction {
+            margin-top: 20px;
+            font-size: 20px;
+            font-weight: bold;
+            color: green;
+        }
+    </style>
+</head>
+<body>
+    <h2>Fingerprint Blood Group Prediction</h2>
+    <form id="upload-form" enctype="multipart/form-data">
+        <input type="file" id="file-input" name="file" required><br>
+        <button type="submit">Predict</button>
+    </form>
+    <div id="prediction"></div>
+
+    <script>
+        document.getElementById("upload-form").addEventListener("submit", function(event) {
+            event.preventDefault();
+            
+            let formData = new FormData();
+            let fileInput = document.getElementById("file-input");
+            formData.append("file", fileInput.files[0]);
+
+            fetch("/predict", {
+                method: "POST",
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById("prediction").innerHTML = 
+                    "Predicted Blood Group: <strong>" + data.predicted_blood_group + "</strong>";
+            })
+            .catch(error => {
+                document.getElementById("prediction").innerHTML = "Error predicting blood group.";
+                console.error("Error:", error);
+            });
+        });
+    </script>
+</body>
+</html>
